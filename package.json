@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/alucardavid/nodejs/issues"
   },
-  "homepage": "https://github.com/alucardavid/nodejs#readme"
+  "homepage": "https://github.com/alucardavid/nodejs#readme",
+  "dependencies": {
+    "connect": "^3.6.6"
+  }
 }
