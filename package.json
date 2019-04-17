@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/alucardavid/nodejs#readme",
   "dependencies": {
-    "connect": "^3.6.6"
+    "connect": "^3.6.6",
+    "express": "^4.16.4"
   }
 }
