@@ -1,10 +1,8 @@
 var express = require('express'),
-    http = require('http');
+    serverIndex = require('serve-index');
 
-// Create an express application
-express()
-    .use((req, res, next) => {
-        res.end('hello express!');
-    }).listen(3000);
+var app = express()
+    .use(express.static(`${__dirname}/public`))
+    .use(serverIndex(`${__dirname}/public`))
+    .listen(3000);
 
-console.log('Server running in port 3000');
