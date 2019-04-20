@@ -2,22 +2,16 @@ var express = require('express');
 
 var app = express();
 
-app.route('/')
-    .all((req, res, next) => {
-        res.write('all\n');
-        next();
-    })
-    .get((req, res, next) => {
-        res.end('get');
-    })
-    .put((req, res, next) => {
-        res.end('put');
-    })
-    .post((req, res, next) => {
-        res.end('post');
-    })
-    .delete((req, res, next) => {
-        res.end('delete');
-    });
+app.get('/', (req, res) => {
+    res.send('nothing passed in!');
+});
+
+app.get(/^\/[0-9]+$/, (req, res) => {
+    res.send('number!');
+});
+
+app.get('/*', (req, res) => {
+    res.send('not a number!');
+});
 
 app.listen(3000);
