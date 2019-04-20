@@ -1,7 +1,25 @@
 var express = require('express'),
-    cookieParser = require('cookie-parser');
+    cookieParser = require('cookie-parser'),
+    cookieSession = require('cookie-session');
 
 var app = express()
+    .use(cookieSession({
+        keys: ['DevGenius@123']
+    }))
+    .use('/home', (req, res) => {
+        if (req.session.views) {
+            req.session.views++;
+        }
+        else{
+            req.session.views = 1;
+        }
+
+        res.end(`Totalviews for you: ${req.session.views}`);
+    })
+    .use('/reset', (req, res) => {
+        delete req.session.views;
+        res.end('Cleared all your views');
+    })
     .use(cookieParser('DevGenius@123'))
     .use('/toggle', (req, res) => {
         if (req.signedCookies.name) {
