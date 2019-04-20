@@ -1,17 +1,25 @@
 var express = require('express'),
-    bodyParser = require('body-parser');
+    cookieParser = require('cookie-parser');
 
 var app = express()
-    .use(bodyParser())
+    .use(cookieParser())
+    .use('/toggle', (req, res) => {
+        if (req.cookies.name) {
+            res.clearCookie('name');
+            res.end(`name cookie cleared! Was: ${req.cookies.name}`);
+        }
+        else{
+            res.cookie('name', 'foo');
+            res.end('name cookie set!');
+        }
+    })
     .use((req, res) => {
-        if (req.body.foo) {
-            res.end(`Body parsed! Value of foo: ${req.body.foo}`);
+        if (req.cookies.name) {
+            console.log('User name:', req.cookies.name);
         }
         else {
-            res.end('Body does not have foo!');
+            res.cookie('name', 'foo');
         }
+        res.end('Hello!');
     })
-    .use((err, req, res, next) => {
-        res.end('Invalid body!');
-    })
-    .listen(3000);
+    .listen('3000');
