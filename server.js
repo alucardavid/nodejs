@@ -1,8 +1,19 @@
 var express = require('express'),
-    compression = require('compression');
+    timeout = require('connect-timeout');
 
 var app = express()
-    .use(compression())
-    .use(express.static(`${__dirname}/public`))
+    .use('/api', timeout(5000), 
+    (req, res, next) => {
+
+    },
+    (error, req, res, next) => {
+        if (req.timedout) {
+            res.statusCode = 500;
+            res.end('Request timed out');
+        }
+        else {
+            next(error);
+        }
+    })
     .listen(3000);
     
