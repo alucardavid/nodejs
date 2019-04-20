@@ -1,8 +1,17 @@
 var express = require('express'),
-    serverIndex = require('serve-index');
+    bodyParser = require('body-parser');
 
 var app = express()
-    .use(express.static(`${__dirname}/public`))
-    .use(serverIndex(`${__dirname}/public`))
+    .use(bodyParser())
+    .use((req, res) => {
+        if (req.body.foo) {
+            res.end(`Body parsed! Value of foo: ${req.body.foo}`);
+        }
+        else {
+            res.end('Body does not have foo!');
+        }
+    })
+    .use((err, req, res, next) => {
+        res.end('Invalid body!');
+    })
     .listen(3000);
-
