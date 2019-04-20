@@ -1,12 +1,26 @@
 var express = require('express');
 
-express()
-    .use('/home', (req, res, next) => {
-        console.log(`first: ${req.url}`);
-        next();
-    })
-    .use((req, res, next) => {
-        console.log(`second: ${req.url}`);
-        next();
-    })
-    .listen(3000);
+var app = express();
+
+app.all('/', (req, res, next) => {
+    res.write('all\n');
+    next();
+});
+
+app.get('/', (req, res, next) => {
+    res.end('get');
+});
+
+app.put('/', (req, res, next) => {
+    res.end('put');
+});
+
+app.post('/', (req, res, next) => {
+    res.end('post');
+});
+
+app.delete('/', (req, res, next) => {
+    res.end('delete');
+});
+
+app.listen(3000);
