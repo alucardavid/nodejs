@@ -2,16 +2,14 @@ var express = require('express');
 
 var app = express();
 
-app.get('/', (req, res) => {
-    res.send('nothing passed in!');
+app.param('userId', (req, res, next, userId) => {
+    res.write(`Looking up user: ${userId}\n`);
+    req.user = { userId: userId};
+    next();
 });
 
-app.get(/^\/[0-9]+$/, (req, res) => {
-    res.send('number!');
-});
-
-app.get('/*', (req, res) => {
-    res.send('not a number!');
+app.get('/user/:userId', (req, res) => {
+    res.end(`user is: ${JSON.stringify(req.user)}`);
 });
 
 app.listen(3000);
