@@ -2,14 +2,14 @@ var express = require('express'),
     cookieParser = require('cookie-parser');
 
 var app = express()
-    .use(cookieParser())
+    .use(cookieParser('DevGenius@123'))
     .use('/toggle', (req, res) => {
-        if (req.cookies.name) {
+        if (req.signedCookies.name) {
             res.clearCookie('name');
-            res.end(`name cookie cleared! Was: ${req.cookies.name}`);
+            res.end(`name cookie cleared! Was: ${req.signedCookies.name}`);
         }
         else{
-            res.cookie('name', 'foo');
+            res.cookie('name', 'foo', { signed: true });
             res.end('name cookie set!');
         }
     })
