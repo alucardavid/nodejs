@@ -2,25 +2,22 @@ var express = require('express');
 
 var app = express();
 
-app.all('/', (req, res, next) => {
-    res.write('all\n');
-    next();
-});
-
-app.get('/', (req, res, next) => {
-    res.end('get');
-});
-
-app.put('/', (req, res, next) => {
-    res.end('put');
-});
-
-app.post('/', (req, res, next) => {
-    res.end('post');
-});
-
-app.delete('/', (req, res, next) => {
-    res.end('delete');
-});
+app.route('/')
+    .all((req, res, next) => {
+        res.write('all\n');
+        next();
+    })
+    .get((req, res, next) => {
+        res.end('get');
+    })
+    .put((req, res, next) => {
+        res.end('put');
+    })
+    .post((req, res, next) => {
+        res.end('post');
+    })
+    .delete((req, res, next) => {
+        res.end('delete');
+    });
 
 app.listen(3000);
