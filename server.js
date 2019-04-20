@@ -1,15 +1,54 @@
-var express = require('express');
+var express = require('express'),
+    bodyParser = require('body-parser');
 
-var app = express();
+var items = [];
 
-app.param('userId', (req, res, next, userId) => {
-    res.write(`Looking up user: ${userId}\n`);
-    req.user = { userId: userId};
-    next();
-});
+var router = express.Router();
 
-app.get('/user/:userId', (req, res) => {
-    res.end(`user is: ${JSON.stringify(req.user)}`);
-});
+router.use(bodyParser());
 
-app.listen(3000);
+router.route('/')
+    .get((req, res, next) => {
+        res.send({
+            status: 'Items found',
+            items: items
+        });
+    })
+    .post((req, res, next) => {
+        items.push(req.body);
+        res.send({
+            status: 'Item added',
+            itemId: items.length - 1
+        });
+    })
+    .put((req, res, next) => {
+        items = req.body;
+        res.send({ status: 'Items replaced'});
+    })
+    .delete((req, res, next) => {
+        items = [];
+        res.send({ status: 'Items cleared'});
+    });
+
+router.route('/:id')
+    .get((req, res, next) => {
+        var id = req.params['id'];
+
+        if (id && items[Number(id)]) {
+            res.send({
+                status: 'Item found',
+                item: items[Number(id)]
+            });
+        }
+        else{
+            res.send(404, { status: 'Not found' });
+        }
+    })
+    .all((req, res, next) => {
+        res.send(501, { status: 'Not implemented' });
+    });
+
+var app = express()
+            .use('/todo', router)
+            .listen(3000);
+
