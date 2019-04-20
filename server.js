@@ -9,7 +9,7 @@ var app = express()
             res.end(`name cookie cleared! Was: ${req.signedCookies.name}`);
         }
         else{
-            res.cookie('name', 'foo', { signed: true });
+            res.cookie('name', 'foo', { signed: true, httpOnly: true, httpOnly: true, secure: true, maxAge: 900000 });
             res.end('name cookie set!');
         }
     })
