@@ -1,19 +1,12 @@
-var express = require('express'),
-    timeout = require('connect-timeout');
+var express = require('express');
 
-var app = express()
-    .use('/api', timeout(5000), 
-    (req, res, next) => {
-
-    },
-    (error, req, res, next) => {
-        if (req.timedout) {
-            res.statusCode = 500;
-            res.end('Request timed out');
-        }
-        else {
-            next(error);
-        }
+express()
+    .use('/home', (req, res, next) => {
+        console.log(`first: ${req.url}`);
+        next();
+    })
+    .use((req, res, next) => {
+        console.log(`second: ${req.url}`);
+        next();
     })
     .listen(3000);
-    
