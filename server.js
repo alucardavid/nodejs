@@ -1,54 +1,30 @@
-var express = require('express'),
-    bodyParser = require('body-parser');
+var MongoClient = require('mongodb').MongoClient;
 
-var items = [];
+var demoPerson = { name: 'John', lasname: 'Smith' };
+var findKey = { name: 'John' };
+var url = 'mongodb://127.0.0.1:27017';
+var dbName = 'demo';
 
-var router = express.Router();
+MongoClient.connect(url, (err, client) => {
+    if (err) throw err;
+    console.log('Successfully connected');
 
-router.use(bodyParser());
+    const db = client.db(dbName);
+    var collection = db.collection('people');
 
-router.route('/')
-    .get((req, res, next) => {
-        res.send({
-            status: 'Items found',
-            items: items
-        });
-    })
-    .post((req, res, next) => {
-        items.push(req.body);
-        res.send({
-            status: 'Item added',
-            itemId: items.length - 1
-        });
-    })
-    .put((req, res, next) => {
-        items = req.body;
-        res.send({ status: 'Items replaced'});
-    })
-    .delete((req, res, next) => {
-        items = [];
-        res.send({ status: 'Items cleared'});
-    });
+    collection.insertOne(demoPerson, (err, docs) => {
 
-router.route('/:id')
-    .get((req, res, next) => {
-        var id = req.params['id'];
+        console.log(`Inserted ${JSON.stringify(docs.ops[0])}`);
+        console.log(`ID: ${demoPerson._id}`);
 
-        if (id && items[Number(id)]) {
-            res.send({
-                status: 'Item found',
-                item: items[Number(id)]
+        collection.find(findKey).toArray((err, results) => {
+            console.log(`Found results: ${JSON.stringify(results)}`);
+
+            collection.deleteOne(findKey, (err, results) => {
+                console.log('Deleted person');
+                
+                client.close();
             });
-        }
-        else{
-            res.send(404, { status: 'Not found' });
-        }
-    })
-    .all((req, res, next) => {
-        res.send(501, { status: 'Not implemented' });
+        });
     });
-
-var app = express()
-            .use('/todo', router)
-            .listen(3000);
-
+});
