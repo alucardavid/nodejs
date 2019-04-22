@@ -1,25 +1,26 @@
-var mongoose = require('mongoose');
+var express = require('express'),
+    expressSession = require('express-session');
 
-var tankSchema = new mongoose.Schema({ name: 'string', size: 'string'} );
-tankSchema.methods.print = function() { console.log(`I am ${this.name} the ${this.size}`)};
-
-var Tank = mongoose.model('Tank', tankSchema);
-
-mongoose.connect('mongodb://127.0.0.1:27017/demo');
-var db = mongoose.connection;
-db.once('open', (cb) => {
-    console.log('connected!');
-    var tony = new Tank( { name: 'tony', size: 'small'});
-    tony.print();
-
-    tony.save(err => {
-        Tank.findOne({ name: 'tony'}).exec((err, tank) => {
-            tank.print();
-
-            db.close();
-            // db.collection('tanks').drop(function() { db.close(); });
-        });
-    });
-});
+var MongoStore = require('connect-mongo')(expressSession);
 
 
+var app = express()
+    .use(expressSession({
+        secret: 'DevGenius@123',
+        store: new MongoStore({ url: 'mongodb://127.0.0.1:27017/session'})
+    }))
+    .use('/home', (req, res) => {
+        if (req.session.views) {
+            req.session.views++;
+        }
+        else{
+            req.session.views = 1;
+        }
+
+        res.end(`Total views for you: ${req.session.views}`)
+    })
+    .use('/reset', (req, res) => {
+        delete req.session.views;
+        res.end('Cleared all your views');
+    })
+    .listen(3000);
