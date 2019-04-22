@@ -1,52 +1,25 @@
-var MongoClient = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
 
-var demoPerson = { name: 'John', lastname: 'Smith' };
-var findKey = { name: 'John' };
-var url = 'mongodb://127.0.0.1:27017';
-var dbName = 'demo';
+var tankSchema = new mongoose.Schema({ name: 'string', size: 'string'} );
+tankSchema.methods.print = function() { console.log(`I am ${this.name} the ${this.size}`)};
 
-MongoClient.connect(url, { useNewUrlParser: true}, (err, client) => {
-    if (err) throw err;
-    console.log('Successfully connected');
+var Tank = mongoose.model('Tank', tankSchema);
 
-    const db = client.db(dbName);
-    var collection = db.collection('people');
+mongoose.connect('mongodb://127.0.0.1:27017/demo');
+var db = mongoose.connection;
+db.once('open', (cb) => {
+    console.log('connected!');
+    var tony = new Tank( { name: 'tony', size: 'small'});
+    tony.print();
 
-    collection.insertOne(demoPerson, (err, docs) => {
-        console.log(`Inserted ${JSON.stringify(docs.ops[0])}`);
-        console.log(`ID: ${demoPerson._id}`);
+    tony.save(err => {
+        Tank.findOne({ name: 'tony'}).exec((err, tank) => {
+            tank.print();
 
+            db.close();
+            // db.collection('tanks').drop(function() { db.close(); });
+        });
     });
-
-    collection.updateOne({ _id: demoPerson._id }, { $set: { lastname: 'Pereira' }}, (err, result) => {
-        if (err) {
-            console.log('Was not possible to update');
-        }
-        else {
-            console.log('Updated');
-            
-        }
-    });
-
-    // collection.find({}).toArray((err, docs) => {
-    //     console.log(`Found results: ${JSON.stringify(docs)}`);
-
-    //     // collection.deleteOne(findKey, (err, results) => {
-    //     //     console.log('Deleted person');
-            
-    //     //     client.close();
-    //     // });
-    // });
-
-    // collection.deleteMany({name: 'John'}, (err, result) => {
-    //     if (err) {
-    //         console.log('Was not possible delete theses peoples');
-    //     }
-    //     else{
-    //         console.log('Deletados');
-            
-    //     }
-    // });
-    
-    client.close();
 });
+
+
