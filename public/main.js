@@ -19,9 +19,6 @@ demoApp.controller('MainController', ['$scope', 'guidService', function($scope, 
             details: vm.newItemDetails
         });
         vm.newItemDetails = '';
-
-        
-        
     };
 
     vm.removeItem = function(itemToRemove) {
