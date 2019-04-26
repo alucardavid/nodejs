@@ -1,29 +1,42 @@
 
 var demoApp = angular.module('demo', []);
 
-demoApp.controller('MainController', ['$scope', 'guidService', function($scope, guidService) {
+demoApp.controller('MainController', ['$scope', 'todoWebService', function($scope, todoWebService) {
 
-    // Setup a view model
+//     // Setup a view model
     var vm = {};
 
-    vm.list = [
-        { _id: guidService.createGuid(), details: 'Demo First Item'},
-        { _id: guidService.createGuid(), details: 'Demo Second Item'}
-    ];
+    vm.list = [];
 
-    vm.addItem = function() {
-        // TODO: send to server then,
-        console.log('Adicionou item.' + vm.newItemDetails);
-        vm.list.push({
-            _id: guidService.createGuid(),
-            details: vm.newItemDetails
-        });
+
+    // Start the initial load of lists
+    todoWebService.getItems().then(function(response) {
+        vm.list = response.data.items;
+    });
+
+    vm.addItem = function () {
+        var item = {
+            name: vm.newItemDetails
+        };
+
+        // Clear it from de UI
         vm.newItemDetails = '';
+    
+        // Send the request to the server and add the item once done
+        todoWebService.addItem(item).then(function(response) {
+            vm.list.push({
+                _id: response.data.itemId,
+                name: item.name
+            });
+        });
     };
 
     vm.removeItem = function(itemToRemove) {
-        // TODO: delete from the server then
+        // Remove it from the list and send the server request
+        console.log(itemToRemove);
+        
         vm.list = vm.list.filter(function(item) { return item._id !== itemToRemove._id; });
+        todoWebService.removeItem(itemToRemove);
     };
 
     // For new items:
@@ -33,13 +46,18 @@ demoApp.controller('MainController', ['$scope', 'guidService', function($scope, 
     $scope.vm = vm;
 }]);
 
-demoApp.service('guidService', function() {
+
+demoApp.service('todoWebService', ['$http', function($http) {
+    var root = '/todo';
     return {
-        createGuid: function() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
+        getItems: function() {
+            return $http.get(root);
+        },
+        addItem: function(item) {
+            return $http.post(root, item);
+        },
+        removeItem: function(item) {
+            return $http.delete(`${root}/${item._id}`);
         }
     }
-});
+}]);

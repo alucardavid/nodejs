@@ -52,7 +52,8 @@ router.route('/:id')
         console.log(id);
         
         //var lookup = { _id: new mongodb.ObjectID(id) };
-        itemsCollection.deleteOne({ _id: id }, (err, reesults) => {
+        itemsCollection.deleteOne({ "_id": id }, (err, results) => {
+            console.log(results.result);
             res.send({ status: 'Item cleared' });
         });
     });

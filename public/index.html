@@ -21,7 +21,7 @@
         <div class="row">
             <div ng-repeat="item in vm.list track by item._id" style="padding:10px">
                 <button class="btn btn-danger" ng-click="vm.removeItem(item)">x</button>
-                {{item.details}}
+                {{item.name}}
             </div>
         </div>
 
