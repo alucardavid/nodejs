@@ -1,43 +1,27 @@
 var express = require('express'),
-    Q = require('q');
- 
-Q.when(null)
-    .then(() => {
-        return 'kung foo';
-    })
-    .then(val => {
-        console.log(val);
-        return Q.when('panda');
-    })
-    .then(val => {
-        console.log(val);
-    })
-    .then(val => {
-        console.log(val == undefined);
-        
-    });
+    Q = require('q')
+    fs = require('fs');
 
-Q.when(null)
-    .then(() => {
-        throw new Error('panda'); // uncaught exception
-    })
-    .then(val => {
-        console.log(`!!!!! ${val}`); // I will never get called
-    })
-    .catch(reason => {
-        console.log(`Someone threw a ${reason.message}`);
-        return 'all good';        
-    })
-    .then(val => {
-        console.log(val); // all goood
-        return Q.reject(new Error('taco'));
-    })
-    .then(val => {
-        console.log(`!!!!!!! ${val}`); // I will never get called
-    })
-    .catch(reason => {
-        console.log(`Someone threw a ${reason.message}`);
-    });
+var readFileAsync = Q.nbind(fs.readFile);
+
+function loadJSONAsync(filename) {
+    return readFileAsync(filename)
+                .then(res => {
+                    return JSON.parse(res);
+                });
+}
+
+// good json file
+loadJSONAsync('good.json')
+    .then(val => console.log(val))
+    .catch(err => console.log(`good.json erro ${err.message}`))
+    .then(() => loadJSONAsync('absent.json'))
+    .then(val => console.log(val))
+    .catch(err => console.log(`absentjson error ${err.message}`))
+    .then(() => loadJSONAsync('bad.json'))
+    .then(val => console.log(val))
+    .catch(err => console.log(`bad.json error ${err.message}`));
+
 
 var app = express()
     .use(express.static(`${__dirname}/public`))
