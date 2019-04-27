@@ -1,41 +1,43 @@
 var express = require('express'),
     Q = require('q');
  
-var willFulfillDeferred = Q.defer();
-var willFulfill = willFulfillDeferred.promise;
-willFulfillDeferred.resolve('final value');
-
-willFulfill
-    .then(function(val) {
-        console.log(`success with ${val}`);
+Q.when(null)
+    .then(() => {
+        return 'kung foo';
     })
-    .catch(function(reason) {
-        console.log(`failed with ${reason}`);
+    .then(val => {
+        console.log(val);
+        return Q.when('panda');
+    })
+    .then(val => {
+        console.log(val);
+    })
+    .then(val => {
+        console.log(val == undefined);
+        
     });
 
-var willrejectDeferred = Q.defer();
-var willreject = willrejectDeferred.promise;
-willrejectDeferred.reject(new Error('rejection reason')); // Note the use of Error
-
-willreject
-    .then(function(val){
-        console.log(`success with ${val}`);
+Q.when(null)
+    .then(() => {
+        throw new Error('panda'); // uncaught exception
     })
-    .catch(function(reason) {
-        console.log(`failed with ${reason}`);
+    .then(val => {
+        console.log(`!!!!! ${val}`); // I will never get called
+    })
+    .catch(reason => {
+        console.log(`Someone threw a ${reason.message}`);
+        return 'all good';        
+    })
+    .then(val => {
+        console.log(val); // all goood
+        return Q.reject(new Error('taco'));
+    })
+    .then(val => {
+        console.log(`!!!!!!! ${val}`); // I will never get called
+    })
+    .catch(reason => {
+        console.log(`Someone threw a ${reason.message}`);
     });
-
-Q.when(null).then(function(val){
-    console.log(val == null); // true
-});
-
-Q.when('kung foo').then(function(val){
-    console.log(val); // kung foo
-});
-
-console.log('I will print first because *then* is always async! ');
-
-
 
 var app = express()
     .use(express.static(`${__dirname}/public`))
