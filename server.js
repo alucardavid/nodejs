@@ -1,26 +1,19 @@
 var express = require('express'),
-    Q = require('q')
-    fs = require('fs');
+    Q = require('q');
 
-var readFileAsync = Q.nbind(fs.readFile);
+var p1 = Q.defer().promise; // pending
+var p2 = Q.when('fulfill'); // fulfilled
+var p3 = p3 = Q.reject(new Error('reject')); // rejected
 
-function loadJSONAsync(filename) {
-    return readFileAsync(filename)
-                .then(res => {
-                    return JSON.parse(res);
-                });
-}
-
-// good json file
-loadJSONAsync('good.json')
-    .then(val => console.log(val))
-    .catch(err => console.log(`good.json erro ${err.message}`))
-    .then(() => loadJSONAsync('absent.json'))
-    .then(val => console.log(val))
-    .catch(err => console.log(`absentjson error ${err.message}`))
-    .then(() => loadJSONAsync('bad.json'))
-    .then(val => console.log(val))
-    .catch(err => console.log(`bad.json error ${err.message}`));
+process.nextTick(() => {
+    console.log(p1.isPending());
+    console.log(p2.isFulfilled());
+    console.log(p3.isRejected());
+    
+    console.log(p1.inspect());
+    console.log(p2.inspect());
+    console.log(p3.inspect());
+})
 
 
 var app = express()
