@@ -1,19 +1,19 @@
 var express = require('express'),
     Q = require('q');
 
-var p1 = Q.defer().promise; // pending
-var p2 = Q.when('fulfill'); // fulfilled
-var p3 = p3 = Q.reject(new Error('reject')); // rejected
+var loadItem = Q.nbind((id, cb) => {
+    setTimeout(() => {
+        cb(null, { id: id});
+    }, 500);
+});
 
-process.nextTick(() => {
-    console.log(p1.isPending());
-    console.log(p2.isFulfilled());
-    console.log(p3.isRejected());
-    
-    console.log(p1.inspect());
-    console.log(p2.inspect());
-    console.log(p3.inspect());
-})
+Q.all([loadItem(1), loadItem(2)])
+    .then(items => {
+        console.log(`Items: ${JSON.stringify(items)}`);
+    })
+    .catch(reason => {
+        console.log(reason);
+    });
 
 
 var app = express()
