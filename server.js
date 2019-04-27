@@ -1,23 +1,40 @@
 var express = require('express'),
     Q = require('q');
  
-function getPromise(){
-    var deferred = Q.defer();
+var willFulfillDeferred = Q.defer();
+var willFulfill = willFulfillDeferred.promise;
+willFulfillDeferred.resolve('final value');
 
-    // Resolve the promise after a second
-    setTimeout(function() {
-        deferred.resolve('final value');
-    }, 1000);
+willFulfill
+    .then(function(val) {
+        console.log(`success with ${val}`);
+    })
+    .catch(function(reason) {
+        console.log(`failed with ${reason}`);
+    });
 
-    return deferred.promise;
-}
+var willrejectDeferred = Q.defer();
+var willreject = willrejectDeferred.promise;
+willrejectDeferred.reject(new Error('rejection reason')); // Note the use of Error
 
-var promise = getPromise();
+willreject
+    .then(function(val){
+        console.log(`success with ${val}`);
+    })
+    .catch(function(reason) {
+        console.log(`failed with ${reason}`);
+    });
 
-promise.then(function(val) {
-    console.log(`done with: ${val}`);
-    
+Q.when(null).then(function(val){
+    console.log(val == null); // true
 });
+
+Q.when('kung foo').then(function(val){
+    console.log(val); // kung foo
+});
+
+console.log('I will print first because *then* is always async! ');
+
 
 
 var app = express()
