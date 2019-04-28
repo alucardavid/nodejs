@@ -1,23 +1,25 @@
 // var express = require('express'),
 //     Q = require('q');
 
-console.time();
+function foo() {
+    var stack = new Error('trace at foo error').stack;
+    
+    // Type one
+    console.trace('trace at foo');
 
-setTimeout(() => {
-    console.timeEnd();
-}, 500);
+    // Type two
+    console.log(stack);
 
-console.time('first');
-setTimeout(() => {
-    console.timeEnd('first');
-}, 1000);
+    // Executi[on continues
+    console.log('Stack trace printed');
+    
+}
 
-console.time('second');
-setTimeout(() => {
-    console.timeEnd('second');
-}, 2000);
+function bar(){
+    foo();
+}
 
-
+bar();
 
 
 // var app = express()
