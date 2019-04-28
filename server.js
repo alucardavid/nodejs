@@ -1,20 +1,21 @@
 // var express = require('express'),
 //     Q = require('q');
 
-console.log(1,2,3);
-console.log(4,5,6);
+console.time();
 
-console.log({life: 42}, {foo: 'I pitty the foo'}, [1, 0]);
+setTimeout(() => {
+    console.timeEnd();
+}, 500);
 
-var foo = {
-    bar: 123,
-    inspect: function () {
-        return `Bar is ${this.bar}`;
-    } 
-}
+console.time('first');
+setTimeout(() => {
+    console.timeEnd('first');
+}, 1000);
 
-// Inspect
-console.log(foo);
+console.time('second');
+setTimeout(() => {
+    console.timeEnd('second');
+}, 2000);
 
 
 
