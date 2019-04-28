@@ -1,33 +1,21 @@
 // var express = require('express'),
 //     Q = require('q');
 
-function* generator() {
-    var bar = yield 'foo';
-    console.log(bar);
+console.log(1,2,3);
+console.log(4,5,6);
+
+console.log({life: 42}, {foo: 'I pitty the foo'}, [1, 0]);
+
+var foo = {
+    bar: 123,
+    inspect: function () {
+        return `Bar is ${this.bar}`;
+    } 
 }
 
-function* generator2() {
-    try {
-        yield 'foo';
-    } catch (err) {
-        console.log(err.message);
-        
-    }
-}
+// Inspect
+console.log(foo);
 
-var iterator = generator();
-// Start execution till we get first yield value
-var foo = iterator.next();
-console.log(foo.value);
-// Resume exection injecting bar
-var nextThing = iterator.next('bar');
-console.log(iterator.next());
-
-var errIterator = generator2();
-
-var foo = errIterator.next();
-console.log(foo.value);
-var nextThing = errIterator.throw(new Error('bar'));
 
 
 
