@@ -1,26 +1,19 @@
 var assert = require('assert');
 
-describe('first', ()  => {
-    it('test 1', () => {
+describe('our test suite', () => {
 
+    it('this should pass', done => {
+        setTimeout(() => {
+            done();
+        }, 500);
+    });
+
+    it('this should fail', done => {
+        setTimeout(() => {
+            done(new Error('fail'));
+        }, 500);
     });
 });
-
-describe.skip('second', () => {
-    it('test 1', () => {
-
-    });
-});
-
-describe('third', () => {
-    it('test 1', () => {
-
-    });
-});
-
-
-
-
 
 
 
