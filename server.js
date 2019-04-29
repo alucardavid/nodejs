@@ -1,17 +1,17 @@
-var assert = require('assert');
-var Q = require('q');
+var express = require('express');
 
-describe('our test suite', () => {
-
-    it('this should pass', () => {
-        return Q.when('pass');
-    });
-
-    it('this should fail', () => {
-        return Q.reject(new Error('fail'));
-    });
-});
-
+express()
+    .use((req, res, next) => {
+        res.write('Hello\n');
+        res.foo.bar;
+        res.end('World!');
+    })
+    .use((err, req, res, next) => {
+        console.log('Error in server', err);
+        res.end('Error!');
+    })
+    .listen(3000);
+console.log('Server running on http://localhost:3000');
 
 
 
