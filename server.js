@@ -1,63 +1,68 @@
-var express = require('express'),
-    bodyParser = require('body-parser');
+var assert = require('assert');
+var List = require('./assert/list');
 
-// The express app
-var app = express();
+var list = new List();
 
-// Create a mongodb connection
-// and only start express listening once the connection is okay
-var MongoClient = require('mongodb').MongoClient;
-var db, itemsCollection;
+console.log('Testing list count');
+assert.equal(list.count(), 0);
 
-MongoClient.connect('mongodb://127.0.0.1:27017', (err, client) => {
-    if (err) throw err;
+console.log('Testing list add');
+list.add({
+    id: '1',
+    value: 'some value'
+});
+assert.equal(list.count(), 1);
 
-    var db = client.db('demo');
-    itemsCollection = db.collection('items');
+console.log('Testing list clear');
+list.clear();
+assert.equal(list.count(), 0);
 
-    app.listen(3000);
-    console.log('Listening on port 3000');
+console.log('Testing list getIds');
+list.add({
+    id: '2',
+    value: 'David'
+});
+assert.equal(list.getIds()[0], '2');
+list.clear();
+
+console.log('Testing list remove');
+list.add({
+    id: '1',
+    value: 'David'
+});
+list.remove('1');
+assert.equal(list.count(), 0);
+
+console.log('Testing list get');
+list.add({
+    id: '1',
+    value: 'David'
+});
+assert.equal(list.get('1').value, 'David');
+list.clear();
+
+console.log('Testing list.add throws an error on invalid value');
+assert.throws(function() {
+    list.add({
+        value: 'David'
+    })
+},
+function (err) {
+    return (err instanceof Error) && (err.message == 'item must have id');
 });
 
-// Create a router that can accept JSON
-var router = express.Router();
 
-router.use(bodyParser.json());
 
-// Setup the collection routes
-router.route('/')
-    .get((req, res, next) => {
-        itemsCollection.find().toArray((err, docs) => {
-            res.send({
-                status: 'Items found',
-                items: docs
-            });
-        });
-    })
-    .post((req, res, next) => {
-        var item = req.body;
-        itemsCollection.insertOne(item, (err, docs) => {
-            res.send({
-                status: 'Item added',
-                itemId: item._id
-            });
-        });
-    });
 
-// Setup the item routes
-router.route('/:id')
-    .delete((req, res, next) => {
-        var id = req.params['id'];
 
-        console.log(id);
-        
-        //var lookup = { _id: new mongodb.ObjectID(id) };
-        itemsCollection.deleteOne({ "_id": id }, (err, results) => {
-            console.log(results.result);
-            res.send({ status: 'Item cleared' });
-        });
-    });
 
-app.use(express.static(`${__dirname}/public`))
-   .use('/todo', router);
+
+
+
+
+
+
+
+
+
 
