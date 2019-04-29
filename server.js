@@ -2,12 +2,18 @@ var assert = require('assert');
 
 describe('our test suite', function() {
     
-    it('should pass this tes', function() {
-        assert.equal(1, 1, '1 should be equal to 1');
+    var testExecuting = 0;
+
+    beforeEach(function() {
+        testExecuting++;
     });
 
-    it('should fail this test', function() {
-        assert.equal(1, 0, '1 should be equal to 0');
+    it('test 1', function() {
+        assert.equal(1, 1, 'This should be test 1');
+    });
+
+    it('test 2', function() {
+        assert.equal(2, 2, 'This should be test 2');
     });
 });
 
